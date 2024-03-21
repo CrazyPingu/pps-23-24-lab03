@@ -70,3 +70,32 @@ object Sequences:
       case Cons(h, t) => foldLeft(t)(f(initial, h))(f)
       case Nil() => initial
 
+
+    // Es 5 ######################################
+    extension [A](l: Sequence[A])
+
+      def zipExtension[B](second: Sequence[B]): Sequence[(A, B)] = (l, second) match
+        case (Cons(h1, t1), Cons(h2, t2)) => Cons((h1, h2), t1.zipExtension(t2))
+        case _ => Nil()
+
+      def takeExtension(n: Int): Sequence[A] = (l, n) match
+        case (Cons(h, t), n) if n > 0 => Cons(h, t.takeExtension(n - 1))
+        case _ => Nil()
+
+      def concatExtension(l2: Sequence[A]): Sequence[A] = l match
+        case Cons(h, t) => Cons(h, t.concatExtension(l2))
+        case Nil() => l2
+
+      def flatMapExtension[B](mapper: A => Sequence[B]): Sequence[B] = l match
+        case Cons(h, t) => concat(mapper(h), t.flatMapExtension(mapper))
+        case Nil() => Nil()
+
+      def getCoursesExtension: Sequence[String] = l.flatMapExtension {
+        case Person.Teacher(_, c) => Cons(c, Nil())
+        case _ => Nil()
+      }
+      @tailrec
+      def foldLeftExtension[B](initial: B)(f: (B, A) => B): B = l match
+        case Cons(h, t) => t.foldLeftExtension(f(initial, h))(f)
+        case Nil() => initial
+
