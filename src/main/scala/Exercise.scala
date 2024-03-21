@@ -1,6 +1,5 @@
 import u02.Modules.Person
 import u03.Optionals.Optional
-
 import scala.annotation.tailrec
 
 // Task 1 (Svolto da solo)
@@ -57,6 +56,7 @@ object Sequences:
         case Nil() => Optional.Empty()
         case _ => Optional.Just(loop(l, Int.MaxValue))
 
+    // Task 2 (Svolto da solo)
     // Es 3 ######################################
     def getCourses(l: Sequence[Person]): Sequence[String] =
       flatMap(l) {
@@ -98,4 +98,56 @@ object Sequences:
       def foldLeftExtension[B](initial: B)(f: (B, A) => B): B = l match
         case Cons(h, t) => t.foldLeftExtension(f(initial, h))(f)
         case Nil() => initial
+
+object Streams:
+
+  import Sequences.*
+
+  enum Stream[A]:
+    private case Empty()
+    private case Cons(head: () => A, tail: () => Stream[A])
+
+  object Stream:
+
+    def empty[A](): Stream[A] = Empty()
+
+    def cons[A](hd: => A, tl: => Stream[A]): Stream[A] =
+      lazy val head = hd
+      lazy val tail = tl
+      Cons(() => head, () => tail)
+
+    def toList[A](stream: Stream[A]): Sequence[A] = stream match
+      case Cons(h, t) => Sequence.Cons(h(), toList(t()))
+      case _ => Sequence.Nil()
+
+    def map[A, B](stream: Stream[A])(f: A => B): Stream[B] = stream match
+      case Cons(head, tail) => cons(f(head()), map(tail())(f))
+      case _ => Empty()
+
+    def filter[A](stream: Stream[A])(pred: A => Boolean): Stream[A] = stream match
+      case Cons(head, tail) if pred(head()) => cons(head(), filter(tail())(pred))
+      case Cons(head, tail) => filter(tail())(pred)
+      case _ => Empty()
+
+    def take[A](stream: Stream[A])(n: Int): Stream[A] = (stream, n) match
+      case (Cons(head, tail), n) if n > 0 => cons(head(), take(tail())(n - 1))
+      case _ => Empty()
+
+    def iterate[A](init: => A)(next: A => A): Stream[A] =
+      cons(init, iterate(next(init))(next))
+
+    // Task 3 (Svolto da solo)
+    // Es 6 ######################################
+    def takeWhile[A](s: Stream[A])(pred: A => Boolean): Stream[A] = s match
+      case Cons(head, tail) if pred(head()) => cons(head(), takeWhile(tail())(pred))
+      case _ => Empty()
+
+    // Es 7 ######################################
+    def fill[A](n: Int, k: A): Stream[A] = n match
+      case n if n > 0 => cons(k, fill(n - 1, k))
+      case _ => Empty()
+
+    // Es 8 ######################################
+    
+
 
