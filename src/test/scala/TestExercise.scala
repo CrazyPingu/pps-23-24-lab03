@@ -79,6 +79,17 @@ class TestExercise:
     val str3 = Stream.fill(3, 7)
     assertEquals(Cons(7, Cons(7, Cons(7, Nil()))), Stream.toList(str3))
 
+  @Test def testPell(): Unit =
+    val str1 = Stream.take(Stream.pell)(10)
+    assertEquals(Cons(0, Cons(1, Cons(2, Cons(5, Cons(12, Cons(29, Cons(70, Cons(169, Cons(408, Cons(985, Nil())))))))))), Stream.toList(str1))
+    val str2 = Stream.take(Stream.pell)(0)
+    assertEquals(Nil(), Stream.toList(str2))
+    val str3 = Stream.take(Stream.pell)(1)
+    assertEquals(Cons(0, Nil()), Stream.toList(str3))
+    val str4 = Stream.take(Stream.pell)(5)
+    assertEquals(Cons(0, Cons(1, Cons(2, Cons(5, Cons(12, Nil()))))), Stream.toList(str4))
+
+
 
 
 
