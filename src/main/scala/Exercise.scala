@@ -148,6 +148,9 @@ object Streams:
       case _ => Empty()
 
     // Es 8 ######################################
-    
+    def pell: Stream[Int] = 
+      def loop(p0: Int, p1: Int): Stream[Int] = cons(p0, loop(p1, 2 * p1 + p0))
+      loop(0, 1)
+
 
 
