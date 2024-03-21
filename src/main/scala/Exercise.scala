@@ -64,3 +64,9 @@ object Sequences:
         case _ => Nil()
       }
 
+    // Es 4 ######################################
+    @tailrec
+    def foldLeft[A, B](l: Sequence[A])(initial: B)(f: (B, A) => B): B = l match
+      case Cons(h, t) => foldLeft(t)(f(initial, h))(f)
+      case Nil() => initial
+
